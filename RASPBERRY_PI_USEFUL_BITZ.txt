@@ -1,0 +1,226 @@
+#
+# RASPBERRY PI USEFUL BITZ
+#
+#AUTO STARTZ
+sudo vim /etc/xdg/lxsession/LXDE/autostart
+
+#disable screen from blank'n
+@xset s off
+@xset -dpms
+@xset s noblank
+
+@midori -e Fullscreen -a http://micronemez.com
+
+#AUTO LOGIN (no X)
+sudo vi /etc/inittab
+
+#no raspberry pi (penguin) logo on boot:
+echo "logo.nologo" >> /boot/cmdline.txt
+
+#no startx
+# comment out this:
+#1:2345:respawn:/sbin/getty 115200 tty1
+# and change to this:
+1:2345:respawn:/bin/login -f pi tty1 </dev/tty1 >/dev/tty1 2>&1
+
+#AUTO START X (LXDE)
+sudo vim /etc/rc.local
+
+# add this above exit 0
+su -l pi -c startx
+
+
+#SCREEN BLANK FIX
+#http://www.raspberrypi.org/phpBB3/viewtopic.php?f=66&t=18200&p=180271#p180271
+
+sudo vim /etc/kbd/config
+BLANK_TIME=0 
+POWERDOWN_TIME=0
+
+#autohide mouse-pointer
+sudo apt-get intall unclutter
+
+#JAVA
+sudo apt-get install librxtx-java openjdk-6-jdk
+
+
+#BUILD PD-EXTENDED!
+http://log.liminastudio.com/writing/tutorials/how-to-build-pd-extended-on-the-raspberry-pi 
+
+sudo apt-get install rsync autoconf libfftw3-dev liblua5.1-0-dev swig libvorbis-dev ladspa-sdk libspeex-dev libmp3lame-dev lua5.1
+
+#rsync -av --delete rsync://128.238.56.50/distros/pd-extended/ pd-extended/
+
+wget http://blinky.at.or.at:8888/auto-build/2012-10-02/Pd-extended_0.43.3~20121002-source.tar.bz2
+wget http://blinky.at.or.at:8888/auto-build/2012-10-02/Pd-extended_0.43.3~20121002-source.debian.tar.bz2
+wget http://apt.puredata.info/auto-build/latest/Pd-extended_0.44.0~20130404-source.tar.bz2
+wget http://apt.puredata.info/auto-build/latest/Pd-extended_0.44.0~20130404-source.debian.tar.bz2
+
+sudo apt-get build-dep puredata gem pdp
+
+
+# WI-FI start command (like if you do not have X autostart!) that could be put in ~/.profile
+sudo wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf -d	
+
+/sbin/wpa_supplicant -s -B -P /var/run/wpa_supplicant.wlan0.pid -i wlan0 -W -D nl80211,wext -c /etc/wpa_supplicant/wpa_supplicant.conf
+
+
+
+# BACKUP CLONE 
+http://raspberrypi.stackexchange.com/questions/311/how-do-i-backup-my-raspberry-pi
+
+#backup
+##dd if=/dev/disk2 | gzip > /Users/edward/Desktop/DUMP/raspii-clone00/rpii00.gz
+#restore
+##gzip -dc /Users/edward/Desktop/DUMP/raspii-clone00/rpii00.gz | dd of=/dev/disk2
+#whee: http://superuser.com/questions/421770/dd-performance-on-mac-os-x-vs-linux
+# 1M==linux & 1m==mac
+# 7948206080 bytes transferred in 1623.679502 secs (4895182 bytes/sec) vs(old): 8068792320 bytes transferred in 8753.619243 secs (921766 bytes/sec)
+
+##########
+# BACKUP #
+##########
+sudo dd if=/dev/rdisk2 bs=1m | gzip > /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz
+#restore
+sudo gzip -dc /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz | dd of=/dev/rdisk2 bs=1m
+
+
+#SCANNER
+
+#For plustek scanners
+#Some plustek scanners (noticeably Canoscan ones), require a lock directory. 
+#Make sure that /var/lock/sane directory exists, that its permissions are 660, and that it is owned by <user>:scanner. 
+#If the directory permissions are wrong, only root will be able to use the scanner. 
+#Seems (at least on x86-64) that some programs using libusb (noticeably xsane and kooka) 
+#need scanner group rw permissions also for accessing /proc/bus/usb to work for a normal user.
+
+sudo apt-get install sane imagemagick scanbuttond sane-utils lockfile-progs netpbm festival toilet
+
+
+#lockup
+# sudo scanimage --format tiff --mode Color --resolution 72 -x 200 -y 200 > /home/pi/scan/out02.tiff 
+# sudo scanimage --mode Color --resolution 75 > /home/pi/scan/out02.tif 
+# -x 215 -y 190 –resolution 600
+# scanimage -d "plustek:libusb:001:005" –format=tiff > test.tiff
+# scanimage -d "plustek:libusb:001:005" -–format tiff > test.tiff
+# scanimage -–format tiff > test.tiff
+# scanimage --format tiff --mode Color --resolution 72 > test2.tiff 
+# scanimage --help -d plustek:libusb:001:005
+# -x 0..215mm [103]
+#        Width of scan-area.
+#    -y 0..297mm [76.21]
+#<D-h><D-h>        Height of scan-area.
+# sudo scanimage -–format=pnm > test.pnm
+#ZOMG!
+#install -d -m 775 -g pi /run/lock/sane
+#install -d -m 775 -g pi /var/lock/sane
+
+
+#WORKZ-ish
+scanimage --format=tiff -x 215 -y 297 > test.tiff
+
+
+pi@raspberrypi ~ $ sudo vim /etc/sane.d/dll.conf
+pi@raspberrypi ~ $ sudo vim /etc/sane.d/dll.d/libsane-extras
+
+
+#http://robsworldoftech.blogspot.com/2010/09/canon-canoscan-lide-100-on-ubuntu-or.html
+
+echo "about to install libusb-dev, build-essential, and libsane-dev"
+read CONTINUE
+
+apt-get install libusb-dev build-essential libsane-dev
+
+echo "git clone git://git.debian.org/sane/sane-backends.git"
+echo "./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var"
+echo "copy the files backend/dll.conf and backend/genesys.conf into /etc/sane.d"
+You'll be able to scan, but only as root. To fix this, you'll need to add the following two lines to your /lib/udev/rules.d/40-libsane.rules file, which you need to edit as root.
+# Canon CanoScan LiDE 100
+ATTRS{idVendor}=="04a9", ATTRS{idProduct}=="1904", ENV{libsane_matched}="yes"
+Reboot. Everything should work.
+
+
+
+
+
+
+#PURE DATA INSTALL FROM GIT
+
+git clone git://pure-data.git.sourceforge.net/gitroot/pure-data/pure-data pure-data
+cd pure-data/src
+./autogen.sh
+./configure CFLAGS="-mfpu=vfp -mfloat-abi=hard"
+make
+sudo make install
+
+It takes around 20min to build, be patient.
+you can start pd using the « pd » command
+
+3. optimising the system for pd :
+
+sudo leafpad /etc/security/limits.conf
+or try nano if you don’t start an X server
+add
+* - rtprio 99
+* - memlock 1000000000
+
+Start pd and go to media > preference > startup
+add the following flag in the startup flag field :
+-rt -alsa -noadc -audiobuf 25
+
+then apply and restart pd.
+
+4. test
+
+download analog synth emulation patch by Cyrille Henry here :
+svn checkout https://pure-data.svn.sourceforge.net/svnroot/pure-data/trunk/externals/nusmuk/nusmuk-audio/ ~/nusmuk-audio
+cd ~/nusmuk-audio
+make
+cd examples
+pd analog_synth_emulation.pd
+
+
+
+# # # # # # # # # # # # # #
+# FULL SCREEN LXTERMINAL  #
+# # # # # # # # # # # # # #
+
+~$ vim ~/.config/openbox/lxde-rc.xml 
+#add this node before </applications>
+  <application name="lxterminal" class="Lxterminal">
+   <decor>no</decor>
+   <position force="yes">
+     <x>0</x>
+     <y>0</y>
+   </position>
+   <desktop>1</desktop>
+   <layer>normal</layer>
+   <skip_pager>yes</skip_pager>
+   <skip_taskbar>no</skip_taskbar>
+   <maximized>true</maximized>
+  </application>
+
+~$ vim ~/.config/lxterminal/lxterminal.conf
+#replace all with
+[general]
+fontname=Monospace 10
+selchars=-A-Za-z0-9,./?%&#:_
+scrollback=1000
+bgcolor=#000000000000
+bgalpha=65535
+fgcolor=#ffff66660000
+disallowbold=false
+cursorblinks=true
+cursorunderline=false
+audiblebell=false
+tabpos=top
+hidescrollbar=true
+hidemenubar=true
+hideclosebutton=true
+disablef10=false
+disablealt=false
+
+
+~$ sudo vim /etc/xdg/lxsession/LXDE/autostart
+#add
+@lxterminal -e /home/pi/timesync.sh
