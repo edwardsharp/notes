@@ -224,3 +224,14 @@ disablealt=false
 ~$ sudo vim /etc/xdg/lxsession/LXDE/autostart
 #add
 @lxterminal -e /home/pi/timesync.sh
+
+
+TWO NETWORK INTERFACES?
+sudo route add default gw 192.168.1.1 wlan0
+
+
+
+curl -s -F method=photos.upload -F api_key=asdfasdfasdfasdf -F auth_token=asdfasdfasdfasdf -F api_sig=adsfasdfasdfasdfasdf -F photo=myfile.jpg api.flickr.com/services/upload/
+
+sudo apt-get install flickcurl-utils
+
