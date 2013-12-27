@@ -233,5 +233,13 @@ sudo route add default gw 192.168.1.1 wlan0
 
 curl -s -F method=photos.upload -F api_key=asdfasdfasdfasdf -F auth_token=asdfasdfasdfasdf -F api_sig=adsfasdfasdfasdfasdf -F photo=myfile.jpg api.flickr.com/services/upload/
 
-sudo apt-get install flickcurl-utils
 
+sudo apt-get install libflickr-api-perl
+wget http://search.cpan.org/CPAN/authors/id/C/CP/CPB/Flickr-Upload-1.32.tar.gz
+tar -zxvf Flickr-Upload-1.32.tar.gz
+cd flickr-upload
+perl Makefile.PL
+make
+make test
+sudo make install
+flickr_upload --auth
