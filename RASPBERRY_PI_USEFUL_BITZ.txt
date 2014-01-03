@@ -243,3 +243,14 @@ make
 make test
 sudo make install
 flickr_upload --auth
+
+# SCREEN
+echo ‘startup_message off’ > ~/.screenrc
+
+# OSC
+sudo apt-get install python-liblo
+
+test by opening a python shell:
+>>> import liblo, sys                                                                                                          
+>>> target = liblo.Address('192.168.1.2',9000)
+>>> liblo.send(target, "/1/label1”, "foo”)
