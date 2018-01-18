@@ -1,10 +1,20 @@
 #
 # RASPBERRY PI USEFUL BITZ
 #
-#AUTO STARTZ
+
+# .local domain (ex: raspberrypi.local)
+sudo apt-get install avahi-daemon
+
+#AUTO X STARTZ
+
+sudo ln -s /home/pi/dmx_ws/dmx_ws.sh /etc/init.d/dmx_ws.sh
+sudo update-rc.d dmx_ws.sh defaults
+
+-or-
+
 sudo vim /etc/xdg/lxsession/LXDE/autostart
 
-#disable screen from blank'n
+#disable screen from blank'n (mostly)
 @xset s off
 @xset -dpms
 @xset s noblank
@@ -58,6 +68,7 @@ wget http://apt.puredata.info/auto-build/latest/Pd-extended_0.44.0~20130404-sour
 
 sudo apt-get build-dep puredata gem pdp
 
+sudo chmod 4755 /usr/bin/pd-extended
 
 # WI-FI start command (like if you do not have X autostart!) that could be put in ~/.profile
 sudo wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf -d	
@@ -81,8 +92,8 @@ http://raspberrypi.stackexchange.com/questions/311/how-do-i-backup-my-raspberry-
 # BACKUP #
 ##########
 sudo dd if=/dev/rdisk2 bs=1m | gzip > /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz
-#restore
-sudo gzip -dc /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz | dd of=/dev/rdisk2 bs=1m
+#restore, note use of sudo
+gzip -dc /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz | sudo dd of=/dev/rdisk2 bs=1m
 
 
 #SCANNER
@@ -141,6 +152,9 @@ Reboot. Everything should work.
 
 
 
+#nodjs
+sudo apt-get install nam
+sudo npm install -g n
 
 
 
@@ -179,6 +193,8 @@ make
 cd examples
 pd analog_synth_emulation.pd
 
+…speaker npm
+apt-get install xdg-utils build-essential libasound-dev 
 
 
 # # # # # # # # # # # # # #
@@ -254,3 +270,169 @@ test by opening a python shell:
 >>> import liblo, sys                                                                                                          
 >>> target = liblo.Address('192.168.1.2',9000)
 >>> liblo.send(target, "/1/label1”, "foo”)
+
+
+
+# # # # # # # # #
+# TOUCH SCREEN  #
+# # # # # # # # #
+
+sudo apt-get update
+mkdir ~/touchscreen 
+cd ~/touchscreen
+wget http://adafruit-download.s3.amazonaws.com/libraspberrypi-bin-adafruit.deb
+wget http://adafruit-download.s3.amazonaws.com/libraspberrypi-dev-adafruit.deb
+wget http://adafruit-download.s3.amazonaws.com/libraspberrypi-doc-adafruit.deb
+wget http://adafruit-download.s3.amazonaws.com/libraspberrypi0-adafruit.deb
+wget http://adafruit-download.s3.amazonaws.com/raspberrypi-bootloader-adafruit-112613.deb
+
+Advanced users! Want to beta test our new DMA-enabled kernel? Its even faster! Instead of the last wget item - grab the Feb 2014 kernel deb file with "wget http://adafruit-download.s3.amazonaws.com/raspberrypi-bootloader-adafruit-20140227-1.deb" You can always install this over the 11-26-13 version or go back and forth
+
+sudo dpkg -i -B *.deb
+
+If you have a version of Raspbian more recent than Sept. 2013, you'll need to turn off the accelerated X framebuffer here, run "sudo mv /usr/share/X11/xorg.conf.d/99-fbturbo.conf .” to remove the accelerated X buffer and save it in your home directory
+
+sudo reboot
+
+sudo modprobe spi-bcm2708
+sudo modprobe fbtft_device name=adafruitts rotate=90
+export FRAMEBUFFER=/dev/fb1 startx
+
+sudo vim /etc/modules
+  #add two lines
+spi-bcm2708
+fbtft_device
+
+sudo vim /etc/modprobe.d/adafruit.conf
+  #add the following line
+ options fbtft_device name=adafruitts rotate=90 frequency=32000000
+
+sudo reboot
+sudo mkdir /etc/X11/xorg.conf.d
+sudo vim /etc/X11/xorg.conf.d/99-calibration.conf
+
+  #and enter in the following lines, then save.
+Section "InputClass"
+        Identifier      "calibration"
+        MatchProduct    "stmpe-ts"
+        Option  "Calibration"   "3800 200 200 3800"
+        Option  "SwapAxes"      "1"
+EndSection
+
+
+  #You can now try to run X again with 
+FRAMEBUFFER=/dev/fb1 startx
+
+
+sudo vim ~/.profile 
+  #and adding 
+export FRAMEBUFFER=/dev/fb1
+
+#CALIBRATION
+sudo vim /etc/udev/rules.d/95-stmpe.rules
+  #add
+SUBSYSTEM=="input", ATTRS{name}=="stmpe-ts", ENV{DEVNAME}=="*event*", SYMLINK+="input/touchscreen" 
+
+#Remove and re-install the touchscreen with
+ sudo rmmod stmpe_ts; sudo modprobe stmpe_ts
+
+ls -l /dev/input/touchscreen
+
+sudo apt-get install evtest tslib libts-bin
+
+#real-time monitor: 
+sudo evtest /dev/input/touchscreen
+
+#meat of the calibration 
+sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_calibrate
+
+#draw
+sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_test
+
+
+wget http://adafruit-download.s3.amazonaws.com/xinput-calibrator_0.7.5-1_armhf.deb
+sudo dpkg -i -B xinput-calibrator_0.7.5-1_armhf.deb
+
+sudo rm /etc/X11/xorg.conf.d/99-calibration.conf
+
+FRAMEBUFFER=/dev/fb1 startx & DISPLAY=:0.0 xinput_calibrator
+
+
+#play video
+mplayer -vo fbdev2:/dev/fb1 -x 240 -y 320 -framedrop file.mp4
+
+# # # # # # # # # # # # #
+# Framebuffer mirroring #
+
+
+#By mirroring /dev/fb0 onto /dev/fb1, we can take advantage of the GPU for hardware accelrated video playback.
+fbcp takes a snapshot of /dev/fb0, copies it to /dev/fb1 and waits 25ms before repeating.
+Snapshotting takes ~10ms and with a 25ms delay it gives roughly 1000/(10+25) = 28fps
+CPU usage: ~2%
+Note: Snapshot and /dev/fb1 driver refresh is not syncronized.
+
+#Install fbcp
+
+sudo apt-get install cmake
+git clone https://github.com/tasanakorn/rpi-fbcp
+cd rpi-fbcp/
+mkdir build
+cd build/
+cmake ..
+make
+sudo install fbcp /usr/local/bin/fbcp
+
+#Load drivers and fbcp
+
+sudo modprobe fbtft dma
+sudo modprobe fbtft_device name=tinylcd35 rotate=90 speed=48000000 fps=50
+
+# Start fb copying process in the background
+fbcp &
+Play video on /dev/fb0, which will also show up on /dev/fb1
+
+omxplayer test_480_320.mpg
+Stop framebuffer copy
+
+killall fbcp
+syslog output
+
+$ tail /var/log/messages
+Dec 15 17:38:07 raspberrypi fbcp[4836]: Primary display is 720 x 480
+Dec 15 17:38:07 raspberrypi fbcp[4836]: Second display is 480 x 320 16bps
+Links:
+http://www.stuffaboutcode.com/2012/06/raspberry-pi-run-program-at-start-up.html
+
+
+# # # # # # # #
+# 2-line LCD  #
+# # # # # # # #
+
+
+sudo apt-get install python-smbus i2c-tools
+
+sudo vim /etc/modules
+# add
+i2c-bcm2708 
+i2c-dev
+
+#reboot -or-
+sudo modprobe i2c-bcm2708
+sudo modprobe i2c-dev
+
+#python toolz:
+git clone https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git
+cd Adafruit-Raspberry-Pi-Python-Code
+cd Adafruit_CharLCDPlate
+
+sudo apt-get install python-dev python-rpi.gpio
+
+
+# # # # # # # #
+# pi printer  #
+# # # # # # # #
+
+lpadmin -p txt -v usb://Unknown/Printer -P
+usermod -a -G lpadmin pi
+ssh pi@receipt.local -T -L 3631:localhost:631
+ 
