@@ -13,65 +13,84 @@ sudo umount /Volumes/rpi
 ```
 
 
-# .local domain (ex: raspberrypi.local)
-sudo apt-get install avahi-daemon
+# use .local domain (ex: raspberrypi.local)
+
+`sudo apt-get install avahi-daemon`
 
 #AUTO X STARTZ
 
+```
 sudo ln -s /home/pi/dmx_ws/dmx_ws.sh /etc/init.d/dmx_ws.sh
 sudo update-rc.d dmx_ws.sh defaults
+```
 
 -or-
 
-sudo vim /etc/xdg/lxsession/LXDE/autostart
+`sudo vim /etc/xdg/lxsession/LXDE/autostart`
 
 -for newer debianz-
 
-vim ~/.config/lxsession/LXDE-pi/autostart 
+`vim ~/.config/lxsession/LXDE-pi/autostart `
 
-#disable screen from blank'n (mostly)
+# disable screen from blank'n (mostly)
+
+```
 @xset s off
 @xset -dpms
 @xset s noblank
 
 @midori -e Fullscreen -a http://micronemez.com
+```
 
 #AUTO LOGIN (no X)
-sudo vi /etc/inittab
+
+`sudo vi /etc/inittab`
 
 #no raspberry pi (penguin) logo on boot:
-echo "logo.nologo" >> /boot/cmdline.txt
 
-#no startx
-# comment out this:
-#1:2345:respawn:/sbin/getty 115200 tty1
-# and change to this:
-1:2345:respawn:/bin/login -f pi tty1 </dev/tty1 >/dev/tty1 2>&1
+`echo "logo.nologo" >> /boot/cmdline.txt`
+
+#no startx 
+
+comment out this:  
+`#1:2345:respawn:/sbin/getty 115200 tty1`  
+and change to this:  
+`1:2345:respawn:/bin/login -f pi tty1 </dev/tty1 >/dev/tty1 2>&1`
 
 #AUTO START X (LXDE)
+
+```
 sudo vim /etc/rc.local
 
 # add this above exit 0
 su -l pi -c startx
-
+```
 
 #SCREEN BLANK FIX
-#http://www.raspberrypi.org/phpBB3/viewtopic.php?f=66&t=18200&p=180271#p180271
 
-sudo vim /etc/kbd/config
+see: http://www.raspberrypi.org/phpBB3/viewtopic.php?f=66&t=18200&p=180271#p180271
+
+
+`sudo vim /etc/kbd/config`
+```
 BLANK_TIME=0 
 POWERDOWN_TIME=0
+```
 
 #autohide mouse-pointer
-sudo apt-get intall unclutter
+
+`sudo apt-get intall unclutter`
 
 #JAVA
-sudo apt-get install librxtx-java openjdk-6-jdk
+
+`sudo apt-get install librxtx-java openjdk-6-jdk`
 
 
 #BUILD PD-EXTENDED!
-http://log.liminastudio.com/writing/tutorials/how-to-build-pd-extended-on-the-raspberry-pi 
 
+see: http://log.liminastudio.com/writing/tutorials/how-to-build-pd-extended-on-the-raspberry-pi 
+
+```
 sudo apt-get install rsync autoconf libfftw3-dev liblua5.1-0-dev swig libvorbis-dev ladspa-sdk libspeex-dev libmp3lame-dev lua5.1
 
 #rsync -av --delete rsync://128.238.56.50/distros/pd-extended/ pd-extended/
@@ -89,12 +108,22 @@ sudo chmod 4755 /usr/bin/pd-extended
 sudo wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf -d	
 
 /sbin/wpa_supplicant -s -B -P /var/run/wpa_supplicant.wlan0.pid -i wlan0 -W -D nl80211,wext -c /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
 
+# BACKUP / CLONE 
 
-# BACKUP CLONE 
-http://raspberrypi.stackexchange.com/questions/311/how-do-i-backup-my-raspberry-pi
+see: http://raspberrypi.stackexchange.com/questions/311/how-do-i-backup-my-raspberry-pi
 
+`sudo dd if=/dev/rdisk2 bs=1m | gzip > /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz`
+
+restore, note use of sudo
+
+`gzip -dc /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz | sudo dd of=/dev/rdisk2 bs=1m`
+
+misc:
+
+```
 #backup
 ##dd if=/dev/disk2 | gzip > /Users/edward/Desktop/DUMP/raspii-clone00/rpii00.gz
 #restore
@@ -102,28 +131,22 @@ http://raspberrypi.stackexchange.com/questions/311/how-do-i-backup-my-raspberry-
 #whee: http://superuser.com/questions/421770/dd-performance-on-mac-os-x-vs-linux
 # 1M==linux & 1m==mac
 # 7948206080 bytes transferred in 1623.679502 secs (4895182 bytes/sec) vs(old): 8068792320 bytes transferred in 8753.619243 secs (921766 bytes/sec)
-
-##########
-# BACKUP #
-##########
-sudo dd if=/dev/rdisk2 bs=1m | gzip > /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz
-#restore, note use of sudo
-gzip -dc /Users/edward/Desktop/DUMP/raspi-clone00/rpi01_base_config.gz | sudo dd of=/dev/rdisk2 bs=1m
-
+```
 
 #SCANNER
 
-#For plustek scanners
-#Some plustek scanners (noticeably Canoscan ones), require a lock directory. 
-#Make sure that /var/lock/sane directory exists, that its permissions are 660, and that it is owned by <user>:scanner. 
-#If the directory permissions are wrong, only root will be able to use the scanner. 
-#Seems (at least on x86-64) that some programs using libusb (noticeably xsane and kooka) 
-#need scanner group rw permissions also for accessing /proc/bus/usb to work for a normal user.
 
-sudo apt-get install sane imagemagick scanbuttond sane-utils lockfile-progs netpbm festival toilet
+For plustek scanners  
+Some plustek scanners (noticeably Canoscan ones), require a lock directory.   
+Make sure that /var/lock/sane directory exists, that its permissions are 660, and that it is owned by <user>:scanner.   
+If the directory permissions are wrong, only root will be able to use the scanner.   
+Seems (at least on x86-64) that some programs using libusb (noticeably xsane and kooka)   
+need scanner group rw permissions also for accessing /proc/bus/usb to work for a normal user.  
 
+`sudo apt-get install sane imagemagick scanbuttond sane-utils lockfile-progs netpbm festival toilet`
 
-#lockup
+```
+#lockup?!
 # sudo scanimage --format tiff --mode Color --resolution 72 -x 200 -y 200 > /home/pi/scan/out02.tiff 
 # sudo scanimage --mode Color --resolution 75 > /home/pi/scan/out02.tif 
 # -x 215 -y 190 –resolution 600
@@ -164,17 +187,20 @@ You'll be able to scan, but only as root. To fix this, you'll need to add the fo
 # Canon CanoScan LiDE 100
 ATTRS{idVendor}=="04a9", ATTRS{idProduct}=="1904", ENV{libsane_matched}="yes"
 Reboot. Everything should work.
-
+```
 
 
 #nodjs
+
+```
 sudo apt-get install nam
 sudo npm install -g n
-
+```
 
 
 #PURE DATA INSTALL FROM GIT
 
+```
 git clone git://pure-data.git.sourceforge.net/gitroot/pure-data/pure-data pure-data
 cd pure-data/src
 ./autogen.sh
@@ -210,12 +236,11 @@ pd analog_synth_emulation.pd
 
 …speaker npm
 apt-get install xdg-utils build-essential libasound-dev 
+```
 
+# FULL SCREEN LXTERMINAL
 
-# # # # # # # # # # # # # #
-# FULL SCREEN LXTERMINAL  #
-# # # # # # # # # # # # # #
-
+```
 ~$ vim ~/.config/openbox/lxde-rc.xml 
 #add this node before </applications>
   <application name="lxterminal" class="Lxterminal">
@@ -251,20 +276,23 @@ hideclosebutton=true
 disablef10=false
 disablealt=false
 
+```
 
+```
 ~$ sudo vim /etc/xdg/lxsession/LXDE/autostart
 #add
 @lxterminal -e /home/pi/timesync.sh
+```
 
+# TWO NETWORK INTERFACES?
 
-TWO NETWORK INTERFACES?
-sudo route add default gw 192.168.1.1 wlan0
+`sudo route add default gw 192.168.1.1 wlan0`
 
+# flick'r upload
 
+`curl -s -F method=photos.upload -F api_key=asdfasdfasdfasdf -F auth_token=asdfasdfasdfasdf -F api_sig=adsfasdfasdfasdfasdf -F photo=myfile.jpg api.flickr.com/services/upload/`
 
-curl -s -F method=photos.upload -F api_key=asdfasdfasdfasdf -F auth_token=asdfasdfasdfasdf -F api_sig=adsfasdfasdfasdfasdf -F photo=myfile.jpg api.flickr.com/services/upload/
-
-
+```
 sudo apt-get install libflickr-api-perl
 wget http://search.cpan.org/CPAN/authors/id/C/CP/CPB/Flickr-Upload-1.32.tar.gz
 tar -zxvf Flickr-Upload-1.32.tar.gz
@@ -274,24 +302,28 @@ make
 make test
 sudo make install
 flickr_upload --auth
+```
 
-# SCREEN
-echo ‘startup_message off’ > ~/.screenrc
+# QUIET SCREEN
+
+`echo ‘startup_message off’ > ~/.screenrc`
 
 # OSC
+
+```
 sudo apt-get install python-liblo
 
 test by opening a python shell:
 >>> import liblo, sys                                                                                                          
 >>> target = liblo.Address('192.168.1.2',9000)
 >>> liblo.send(target, "/1/label1”, "foo”)
+```
 
 
 
-# # # # # # # # #
-# TOUCH SCREEN  #
-# # # # # # # # #
+# TOUCH SCREEN  
 
+```
 sudo apt-get update
 mkdir ~/touchscreen 
 cd ~/touchscreen
@@ -300,13 +332,15 @@ wget http://adafruit-download.s3.amazonaws.com/libraspberrypi-dev-adafruit.deb
 wget http://adafruit-download.s3.amazonaws.com/libraspberrypi-doc-adafruit.deb
 wget http://adafruit-download.s3.amazonaws.com/libraspberrypi0-adafruit.deb
 wget http://adafruit-download.s3.amazonaws.com/raspberrypi-bootloader-adafruit-112613.deb
+```
 
 Advanced users! Want to beta test our new DMA-enabled kernel? Its even faster! Instead of the last wget item - grab the Feb 2014 kernel deb file with "wget http://adafruit-download.s3.amazonaws.com/raspberrypi-bootloader-adafruit-20140227-1.deb" You can always install this over the 11-26-13 version or go back and forth
 
-sudo dpkg -i -B *.deb
+`sudo dpkg -i -B *.deb`
 
 If you have a version of Raspbian more recent than Sept. 2013, you'll need to turn off the accelerated X framebuffer here, run "sudo mv /usr/share/X11/xorg.conf.d/99-fbturbo.conf .” to remove the accelerated X buffer and save it in your home directory
 
+```
 sudo reboot
 
 sudo modprobe spi-bcm2708
@@ -324,6 +358,9 @@ sudo vim /etc/modprobe.d/adafruit.conf
 
 sudo reboot
 sudo mkdir /etc/X11/xorg.conf.d
+```
+
+```
 sudo vim /etc/X11/xorg.conf.d/99-calibration.conf
 
   #and enter in the following lines, then save.
@@ -337,57 +374,68 @@ EndSection
 
   #You can now try to run X again with 
 FRAMEBUFFER=/dev/fb1 startx
+```
 
-
-sudo vim ~/.profile 
+```
+sudo vim ~/.profile
   #and adding 
 export FRAMEBUFFER=/dev/fb1
+```
 
-#CALIBRATION
+###CALIBRATION
+
+```
 sudo vim /etc/udev/rules.d/95-stmpe.rules
   #add
 SUBSYSTEM=="input", ATTRS{name}=="stmpe-ts", ENV{DEVNAME}=="*event*", SYMLINK+="input/touchscreen" 
+```
 
-#Remove and re-install the touchscreen with
- sudo rmmod stmpe_ts; sudo modprobe stmpe_ts
+###Remove and re-install the touchscreen with
+
+```
+sudo rmmod stmpe_ts; sudo modprobe stmpe_ts
 
 ls -l /dev/input/touchscreen
 
 sudo apt-get install evtest tslib libts-bin
-
-#real-time monitor: 
-sudo evtest /dev/input/touchscreen
-
-#meat of the calibration 
-sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_calibrate
-
-#draw
-sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_test
+```
 
 
+###real-time monitor: 
+`sudo evtest /dev/input/touchscreen`
+
+###meat of the calibration 
+~sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_calibrate~
+
+###draw
+~sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_test`
+
+```
 wget http://adafruit-download.s3.amazonaws.com/xinput-calibrator_0.7.5-1_armhf.deb
 sudo dpkg -i -B xinput-calibrator_0.7.5-1_armhf.deb
 
 sudo rm /etc/X11/xorg.conf.d/99-calibration.conf
 
 FRAMEBUFFER=/dev/fb1 startx & DISPLAY=:0.0 xinput_calibrator
+```
+
+###play video
+
+`mplayer -vo fbdev2:/dev/fb1 -x 240 -y 320 -framedrop file.mp4`
 
 
-#play video
-mplayer -vo fbdev2:/dev/fb1 -x 240 -y 320 -framedrop file.mp4
-
-# # # # # # # # # # # # #
-# Framebuffer mirroring #
+# Framebuffer mirroring 
 
 
-#By mirroring /dev/fb0 onto /dev/fb1, we can take advantage of the GPU for hardware accelrated video playback.
+By mirroring /dev/fb0 onto /dev/fb1, we can take advantage of the GPU for hardware accelrated video playback.
 fbcp takes a snapshot of /dev/fb0, copies it to /dev/fb1 and waits 25ms before repeating.
 Snapshotting takes ~10ms and with a 25ms delay it gives roughly 1000/(10+25) = 28fps
 CPU usage: ~2%
 Note: Snapshot and /dev/fb1 driver refresh is not syncronized.
 
-#Install fbcp
+###Install fbcp
 
+```
 sudo apt-get install cmake
 git clone https://github.com/tasanakorn/rpi-fbcp
 cd rpi-fbcp/
@@ -396,34 +444,41 @@ cd build/
 cmake ..
 make
 sudo install fbcp /usr/local/bin/fbcp
+```
 
-#Load drivers and fbcp
+###Load drivers and fbcp
 
+```
 sudo modprobe fbtft dma
 sudo modprobe fbtft_device name=tinylcd35 rotate=90 speed=48000000 fps=50
+```
 
-# Start fb copying process in the background
-fbcp &
-Play video on /dev/fb0, which will also show up on /dev/fb1
+### Start fb copying process in the background
 
-omxplayer test_480_320.mpg
-Stop framebuffer copy
+`fbcp &`
 
+###Play video on /dev/fb0, which will also show up on /dev/fb1
+
+`omxplayer test_480_320.mpg`
+
+### Stop framebuffer copy
+
+```
 killall fbcp
 syslog output
+```
 
-$ tail /var/log/messages
+`$ tail /var/log/messages`
+
 Dec 15 17:38:07 raspberrypi fbcp[4836]: Primary display is 720 x 480
 Dec 15 17:38:07 raspberrypi fbcp[4836]: Second display is 480 x 320 16bps
-Links:
-http://www.stuffaboutcode.com/2012/06/raspberry-pi-run-program-at-start-up.html
+
+see: http://www.stuffaboutcode.com/2012/06/raspberry-pi-run-program-at-start-up.html
 
 
-# # # # # # # #
-# 2-line LCD  #
-# # # # # # # #
+# 2-line LCD  
 
-
+```
 sudo apt-get install python-smbus i2c-tools
 
 sudo vim /etc/modules
@@ -441,13 +496,13 @@ cd Adafruit-Raspberry-Pi-Python-Code
 cd Adafruit_CharLCDPlate
 
 sudo apt-get install python-dev python-rpi.gpio
+```
 
 
-# # # # # # # #
-# pi printer  #
-# # # # # # # #
+# pi printer  
 
+```
 lpadmin -p txt -v usb://Unknown/Printer -P
 usermod -a -G lpadmin pi
 ssh pi@receipt.local -T -L 3631:localhost:631
- 
+ ```
