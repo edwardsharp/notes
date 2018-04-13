@@ -2,6 +2,17 @@
 # RASPBERRY PI USEFUL BITZ
 #
 
+# mount ext4 fs on OSX
+```
+brew cask install osxfuse
+brew install ext4fuse
+sudo mkdir /Volumes/rpi
+sudo ext4fuse /dev/disk2s2 /Volumes/rpi -o allow_other
+#NOTE: use disk utility app to figure out the SD card path. disk utility will show something like "device: disk4s1" so you would translate that into /dev/disk4s2... 
+sudo umount /Volumes/rpi
+```
+
+
 # .local domain (ex: raspberrypi.local)
 sudo apt-get install avahi-daemon
 
