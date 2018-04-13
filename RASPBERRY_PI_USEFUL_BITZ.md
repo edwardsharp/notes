@@ -2,7 +2,6 @@
 
 # contentz
 
-* [RASPBERRY PI USEFUL BITZ](#raspberry-pi-useful-bitz)
 * [mount ext4 fs on OSX](#mount-ext4-fs-on-osx)
 * [use .local domain (ex: raspberrypi.local)](#use-local-domain-ex-raspberrypilocal)
 * [AUTO X STARTZ](#auto-x-startz)
