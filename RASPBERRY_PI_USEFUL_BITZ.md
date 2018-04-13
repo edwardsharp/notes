@@ -17,7 +17,7 @@ sudo umount /Volumes/rpi
 
 `sudo apt-get install avahi-daemon`
 
-#AUTO X STARTZ
+# AUTO X STARTZ
 
 ```
 sudo ln -s /home/pi/dmx_ws/dmx_ws.sh /etc/init.d/dmx_ws.sh
@@ -42,22 +42,22 @@ sudo update-rc.d dmx_ws.sh defaults
 @midori -e Fullscreen -a http://micronemez.com
 ```
 
-#AUTO LOGIN (no X)
+# AUTO LOGIN (no X)
 
 `sudo vi /etc/inittab`
 
-#no raspberry pi (penguin) logo on boot:
+# no raspberry pi (penguin) logo on boot:
 
 `echo "logo.nologo" >> /boot/cmdline.txt`
 
-#no startx 
+# no startx 
 
 comment out this:  
 `#1:2345:respawn:/sbin/getty 115200 tty1`  
 and change to this:  
 `1:2345:respawn:/bin/login -f pi tty1 </dev/tty1 >/dev/tty1 2>&1`
 
-#AUTO START X (LXDE)
+# AUTO START X (LXDE)
 
 ```
 sudo vim /etc/rc.local
@@ -66,7 +66,7 @@ sudo vim /etc/rc.local
 su -l pi -c startx
 ```
 
-#SCREEN BLANK FIX
+# SCREEN BLANK FIX
 
 see: http://www.raspberrypi.org/phpBB3/viewtopic.php?f=66&t=18200&p=180271#p180271
 
@@ -77,16 +77,16 @@ BLANK_TIME=0
 POWERDOWN_TIME=0
 ```
 
-#autohide mouse-pointer
+# autohide mouse-pointer
 
 `sudo apt-get intall unclutter`
 
-#JAVA
+# JAVA
 
 `sudo apt-get install librxtx-java openjdk-6-jdk`
 
 
-#BUILD PD-EXTENDED!
+# BUILD PD-EXTENDED!
 
 see: http://log.liminastudio.com/writing/tutorials/how-to-build-pd-extended-on-the-raspberry-pi 
 
@@ -133,7 +133,7 @@ misc:
 # 7948206080 bytes transferred in 1623.679502 secs (4895182 bytes/sec) vs(old): 8068792320 bytes transferred in 8753.619243 secs (921766 bytes/sec)
 ```
 
-#SCANNER
+# SCANNER
 
 
 For plustek scanners  
@@ -190,15 +190,15 @@ Reboot. Everything should work.
 ```
 
 
-#nodjs
+# nodejs
 
 ```
-sudo apt-get install nam
+sudo apt-get install npm
 sudo npm install -g n
 ```
 
 
-#PURE DATA INSTALL FROM GIT
+# PURE DATA INSTALL FROM GIT
 
 ```
 git clone git://pure-data.git.sourceforge.net/gitroot/pure-data/pure-data pure-data
@@ -382,7 +382,7 @@ sudo vim ~/.profile
 export FRAMEBUFFER=/dev/fb1
 ```
 
-###CALIBRATION
+### CALIBRATION
 
 ```
 sudo vim /etc/udev/rules.d/95-stmpe.rules
@@ -390,7 +390,7 @@ sudo vim /etc/udev/rules.d/95-stmpe.rules
 SUBSYSTEM=="input", ATTRS{name}=="stmpe-ts", ENV{DEVNAME}=="*event*", SYMLINK+="input/touchscreen" 
 ```
 
-###Remove and re-install the touchscreen with
+### Remove and re-install the touchscreen with
 
 ```
 sudo rmmod stmpe_ts; sudo modprobe stmpe_ts
@@ -401,13 +401,13 @@ sudo apt-get install evtest tslib libts-bin
 ```
 
 
-###real-time monitor: 
+### real-time monitor: 
 `sudo evtest /dev/input/touchscreen`
 
-###meat of the calibration 
+### meat of the calibration 
 ~sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_calibrate~
 
-###draw
+### draw
 ~sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_test`
 
 ```
@@ -419,7 +419,7 @@ sudo rm /etc/X11/xorg.conf.d/99-calibration.conf
 FRAMEBUFFER=/dev/fb1 startx & DISPLAY=:0.0 xinput_calibrator
 ```
 
-###play video
+### play video
 
 `mplayer -vo fbdev2:/dev/fb1 -x 240 -y 320 -framedrop file.mp4`
 
@@ -433,7 +433,7 @@ Snapshotting takes ~10ms and with a 25ms delay it gives roughly 1000/(10+25) = 2
 CPU usage: ~2%
 Note: Snapshot and /dev/fb1 driver refresh is not syncronized.
 
-###Install fbcp
+### Install fbcp
 
 ```
 sudo apt-get install cmake
@@ -446,7 +446,7 @@ make
 sudo install fbcp /usr/local/bin/fbcp
 ```
 
-###Load drivers and fbcp
+### Load drivers and fbcp
 
 ```
 sudo modprobe fbtft dma
@@ -457,7 +457,7 @@ sudo modprobe fbtft_device name=tinylcd35 rotate=90 speed=48000000 fps=50
 
 `fbcp &`
 
-###Play video on /dev/fb0, which will also show up on /dev/fb1
+### Play video on /dev/fb0, which will also show up on /dev/fb1
 
 `omxplayer test_480_320.mpg`
 
@@ -497,7 +497,6 @@ cd Adafruit_CharLCDPlate
 
 sudo apt-get install python-dev python-rpi.gpio
 ```
-
 
 # pi printer  
 
