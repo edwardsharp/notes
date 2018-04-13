@@ -1,6 +1,46 @@
-#
 # RASPBERRY PI USEFUL BITZ
-#
+
+# contentz
+
+* [RASPBERRY PI USEFUL BITZ](#raspberry-pi-useful-bitz)
+* [mount ext4 fs on OSX](#mount-ext4-fs-on-osx)
+* [use .local domain (ex: raspberrypi.local)](#use-local-domain-ex-raspberrypilocal)
+* [AUTO X STARTZ](#auto-x-startz)
+* [disable screen from blank'n (mostly)](#disable-screen-from-blankn-mostly)
+* [AUTO LOGIN (no X)](#auto-login-no-x)
+* [no raspberry pi (penguin) logo on boot:](#no-raspberry-pi-penguin-logo-on-boot)
+* [no startx](#no-startx)
+* [AUTO START X (LXDE)](#auto-start-x-lxde)
+* [SCREEN BLANK FIX](#screen-blank-fix)
+* [autohide mouse-pointer](#autohide-mouse-pointer)
+* [JAVA](#java)
+* [BUILD PD-EXTENDED!](#build-pd-extended)
+* [BACKUP / CLONE](#backup--clone)
+* [SCANNER](#scanner)
+* [nodejs](#nodejs)
+* [PURE DATA INSTALL FROM GIT](#pure-data-install-from-git)
+* [FULL SCREEN LXTERMINAL](#full-screen-lxterminal)
+* [TWO NETWORK INTERFACES?](#two-network-interfaces)
+* [flick'r upload](#flickr-upload)
+* [QUIET SCREEN](#quiet-screen)
+* [OSC](#osc)
+* [TOUCH SCREEN](#touch-screen)
+     * [CALIBRATION](#calibration)
+     * [Remove and re-install the touchscreen with](#remove-and-re-install-the-touchscreen-with)
+     * [real-time monitor:](#real-time-monitor)
+     * [meat of the calibration](#meat-of-the-calibration)
+     * [draw](#draw)
+     * [play video](#play-video)
+* [Framebuffer mirroring](#framebuffer-mirroring)
+     * [Install fbcp](#install-fbcp)
+     * [Load drivers and fbcp](#load-drivers-and-fbcp)
+     * [Start fb copying process in the background](#start-fb-copying-process-in-the-background)
+     * [Play video on /dev/fb0, which will also show up on /dev/fb1](#play-video-on-devfb0-which-will-also-show-up-on-devfb1)
+     * [Stop framebuffer copy](#stop-framebuffer-copy)
+* [2-line LCD](#2-line-lcd)
+* [pi printer](#pi-printer)
+
+
 
 # mount ext4 fs on OSX
 ```
