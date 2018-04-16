@@ -605,4 +605,4 @@ ssh pi@receipt.local -T -L 3631:localhost:631
 
  # ssh notes
 
-disable password logins (add your ssh pubkey to ~/.ssh/authorized_keys) add `PasswordAuthentication no` to `/etc/ssh/sshd_config`
+disable password logins (add your ssh pubkey to ~/.ssh/authorized_keys) add `PasswordAuthentication no` to `/etc/ssh/sshd_config` then `sudo /etc/init.d/ssh restart`
