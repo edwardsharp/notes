@@ -3,6 +3,7 @@
 # contentz
 
 * [mount ext4 fs on OSX](#mount-ext4-fs-on-osx)
+* [initialize a disk](#initialize-a-disk)
 * [use .local domain (ex: raspberrypi.local)](#use-local-domain-ex-raspberrypilocal)
 * [AUTO X STARTZ](#auto-x-startz)
 * [disable screen from blank'n (mostly)](#disable-screen-from-blankn-mostly)
@@ -51,6 +52,25 @@ sudo ext4fuse /dev/disk2s2 /Volumes/rpi -o allow_other
 sudo umount /Volumes/rpi
 ```
 
+# initialize a disk
+
+note: use `sudo parted -l` or `lsblk` to figure out what device you want (/dev/sda in the example below). 
+
+```
+sudo parted /dev/sda mklabel gpt
+sudo parted -a opt /dev/sda mkpart primary ext4 0% 100%
+sudo mkfs.ext4 -L datapartition /dev/sda1
+sudo mkdir -p /mnt/data
+```
+
+change/add label: `sudo e2label /dev/sda1 newlabel`
+
+mount once: `sudo mount /dev/sda1 /mnt/data`
+
+to mount on boot, edit /etc/fstab & add:  
+`LABEL=newlabel /mnt/data ext4 defaults,nofail 0 2`
+
+note: nofail to skip mount on boot if device is not available (e.g. usb disk not plugged in)
 
 # use .local domain (ex: raspberrypi.local)
 
