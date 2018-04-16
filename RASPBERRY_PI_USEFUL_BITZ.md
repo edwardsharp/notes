@@ -4,6 +4,7 @@
 
 * [mount ext4 fs on OSX](#mount-ext4-fs-on-osx)
 * [initialize a disk](#initialize-a-disk)
+* [dat](#dat)
 * [use .local domain (ex: raspberrypi.local)](#use-local-domain-ex-raspberrypilocal)
 * [AUTO X STARTZ](#auto-x-startz)
 * [disable screen from blank'n (mostly)](#disable-screen-from-blankn-mostly)
@@ -263,6 +264,47 @@ tar -xvf node-v8.11.1-linux-armv6l.tar.xz
 cd node-v8.11.1-linux-armv6l
 sudo cp -R * /usr/local/
 ```
+
+also, i'm too lazy to change file permissions so often global (-g) npm installz don't work, getting errors like:
+
+```
+gyp WARN EACCES attempting to reinstall using temporary dev dir "/usr/local/lib/node_modules/hypercored/node_modules/utp-native/.node-gyp"
+gyp WARN EACCES user "root" does not have permission to access the dev dir "/usr/local/lib/node_modules/hypercored/node_modules/utp-native/.node-gyp/8.11.1"
+```
+
+...to fix i guess the `--unsafe-perm` flag workz.
+
+`sudo npm install --unsafe-perm -g somelib`
+
+# dat
+
+`sudo npm install --unsafe-perm -g dat`
+
+see also: https://docs.datproject.org/server
+
+```
+npm install --unsafe-perm -g hypercored
+touch feeds
+```
+
+add to feeds file something like:
+
+```
+dat://one-hash
+two-hash
+website.com/three-hash
+```
+
+run it forever
+
+```
+sudo npm install --unsafe-perm -g add-to-systemd lil-pids
+mkdir ~/dat
+echo "hypercored --cwd ~/dat" > ~/dat/services
+sudo add-to-systemd dat-lil-pids $(which lil-pids) ~/dat/services ~/dat/pids
+sudo systemctl start dat-lil-pids
+```
+
 
 # PURE DATA INSTALL FROM GIT
 
