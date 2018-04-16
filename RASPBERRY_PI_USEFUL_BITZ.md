@@ -252,10 +252,17 @@ Reboot. Everything should work.
 # nodejs
 
 ```
-sudo apt-get install npm
-sudo npm install -g n
+sudo apt-get install nodejs npm
 ```
 
+-or- for more recent versions, download the linux-armv6l binaries:
+
+```
+wget https://nodejs.org/dist/v8.11.1/node-v8.11.1-linux-armv6l.tar.xz
+tar -xvf node-v8.11.1-linux-armv6l.tar.xz
+cd node-v8.11.1-linux-armv6l
+sudo cp -R * /usr/local/
+```
 
 # PURE DATA INSTALL FROM GIT
 
