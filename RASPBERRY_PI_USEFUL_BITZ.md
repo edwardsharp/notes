@@ -26,21 +26,10 @@
 * [QUIET SCREEN](#quiet-screen)
 * [OSC](#osc)
 * [TOUCH SCREEN](#touch-screen)
-     * [CALIBRATION](#calibration)
-     * [Remove and re-install the touchscreen with](#remove-and-re-install-the-touchscreen-with)
-     * [real-time monitor:](#real-time-monitor)
-     * [meat of the calibration](#meat-of-the-calibration)
-     * [draw](#draw)
-     * [play video](#play-video)
 * [Framebuffer mirroring](#framebuffer-mirroring)
-     * [Install fbcp](#install-fbcp)
-     * [Load drivers and fbcp](#load-drivers-and-fbcp)
-     * [Start fb copying process in the background](#start-fb-copying-process-in-the-background)
-     * [Play video on /dev/fb0, which will also show up on /dev/fb1](#play-video-on-devfb0-which-will-also-show-up-on-devfb1)
-     * [Stop framebuffer copy](#stop-framebuffer-copy)
 * [2-line LCD](#2-line-lcd)
 * [pi printer](#pi-printer)
-
+* [ssh notes](#ssh-notes)
 
 
 # mount ext4 fs on OSX
@@ -613,3 +602,7 @@ lpadmin -p txt -v usb://Unknown/Printer -P
 usermod -a -G lpadmin pi
 ssh pi@receipt.local -T -L 3631:localhost:631
  ```
+
+ # ssh notes
+
+disable password logins (add your ssh pubkey to ~/.ssh/authorized_keys) add `PasswordAuthentication no` to `/etc/ssh/sshd_config`
